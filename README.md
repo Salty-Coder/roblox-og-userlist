@@ -1,5 +1,5 @@
 # roblox-og-userlist
- Checks og user IDs and logs active account usernames to a file.
+ Checks Roblox User IDs with selenium, if the user exists then write their username to a file.
 
 ### How to run
 1. Download `chromedriver.exe` for your version of chrome from [here](https://chromedriver.chromium.org/downloads)
