@@ -34,47 +34,58 @@ num = startnum or 1
 
 if clear == "Y":
     open("Users.txt", "w").close()
-  
+
 
 
 driver = webdriver.Chrome("chromedriver.exe", options=options)
 
-f = open('Users.txt', 'a+')  
+with open('Users.txt', 'a+') as f:
+    valid = 0
+    deleted = 0
+    failed = 0
 
+    while num <= maxnum:
+        time.sleep(delay)
+        driver.get(f"https://www.roblox.com/users/{str(num)}/profile")
 
-valid = 0
-deleted = 0
-failed = 0
-
-while num <= maxnum:
-    time.sleep(delay)
-    driver.get("https://www.roblox.com/users/" + str(num) + "/profile")
-
-    try:
-        name = driver.find_element_by_xpath('//*[@id="container-main"]/div[2]/div[2]/div/div[1]/div/div[2]/div[2]/div[1]/div[1]/h2').text
-        named = True
-        valid = valid + 1
-        print("[" + Fore.YELLOW + "#" + Fore.RESET + "] " + Fore.GREEN + str(num) + " = Success!" + Fore.RESET)
-    except NoSuchElementException:
         try:
-            driver.find_element_by_xpath('//*[@id="container-main"]/div[2]/div/div/div[1]/h4')
-            named = False
-            deleted = deleted + 1
-            print("[" + Fore.YELLOW + "#" + Fore.RESET + "] " + Fore.YELLOW + str(num) + " = Deleted." + Fore.RESET)
+            name = driver.find_element_by_xpath('//*[@id="container-main"]/div[2]/div[2]/div/div[1]/div/div[2]/div[2]/div[1]/div[1]/h2').text
+            named = True
+            valid = valid + 1
+            print(
+                f"[{Fore.YELLOW}#{Fore.RESET}] {Fore.GREEN}{str(num)} = Success!{Fore.RESET}"
+            )
         except NoSuchElementException:
-            named = False
-            failed = failed + 1
-            print("[" + Fore.YELLOW + "#" + Fore.RESET + "] " + Fore.RED + str(num) + " = Failed." + Fore.RESET)
+            try:
+                driver.find_element_by_xpath('//*[@id="container-main"]/div[2]/div/div/div[1]/h4')
+                named = False
+                deleted = deleted + 1
+                print(
+                    f"[{Fore.YELLOW}#{Fore.RESET}] {Fore.YELLOW}{str(num)} = Deleted.{Fore.RESET}"
+                )
+            except NoSuchElementException:
+                named = False
+                failed = failed + 1
+                print(
+                    f"[{Fore.YELLOW}#{Fore.RESET}] {Fore.RED}{str(num)} = Failed.{Fore.RESET}"
+                )
 
-    num = num + 1
-    if name and named == True: f.write(name + "\n")
-    f.flush()
+        num = num + 1
+        if name and named: f.write(name + "\n")
+        f.flush()
 
-print("[" + Fore.BLUE + "#" + Fore.RESET + "] " + Fore.CYAN + "Valid - " + str(valid) + Fore.RESET)
-print("[" + Fore.BLUE + "#" + Fore.RESET + "] " + Fore.CYAN + "Deleted - " + str(deleted) + Fore.RESET)
-print("[" + Fore.BLUE + "#" + Fore.RESET + "] " + Fore.CYAN + "Failed - " + str(failed) + Fore.RESET)
-print("[" + Fore.BLUE + "#" + Fore.RESET + "] " + Fore.CYAN + "Total - " + str(valid + deleted + failed) + Fore.RESET)
+    print(
+        f"[{Fore.BLUE}#{Fore.RESET}] {Fore.CYAN}Valid - {str(valid)}{Fore.RESET}"
+    )
+    print(
+        f"[{Fore.BLUE}#{Fore.RESET}] {Fore.CYAN}Deleted - {str(deleted)}{Fore.RESET}"
+    )
+    print(
+        f"[{Fore.BLUE}#{Fore.RESET}] {Fore.CYAN}Failed - {str(failed)}{Fore.RESET}"
+    )
+    print(
+        f"[{Fore.BLUE}#{Fore.RESET}] {Fore.CYAN}Total - {str(valid + deleted + failed)}{Fore.RESET}"
+    )
 
 
-driver.quit()
-f.close()
+    driver.quit()
